@@ -15,7 +15,7 @@ fs=8k
 textgrid_dir=downloads/Eval_Ali/Eval_Ali_far/textgrid_dir
 wav_dir=downloads/Eval_Ali/Eval_Ali_far/audio_dir
 work_dir=downloads/Eval_Ali/Eval_Ali_far
-output_dir=data/
+output_dir=data
 output_task_dir=
 
  . utils/parse_options.sh || exit 1;
@@ -47,10 +47,10 @@ fi
 
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ] ; then
     for name in train eval; do
-        output_task_dir = "$output_dir/$name"
-        mkdir -p $output_task_dir
+        mkdir -p "$output_dir/$name"
+        output_task_dir= $output_dir/$name
         # Prepare the AliMeeting data
-        echo "Prepare Alimeeting data"
+        echo "Prepare Kaldi Type Alimeeting data"
         find $wav_dir -name "*\.wav" > $output_task_dir/wavlist
         sort  $output_task_dir/wavlist > $output_task_dir/tmp
         cp $output_task_dir/tmp $output_task_dir/wavlist
