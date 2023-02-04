@@ -16,6 +16,7 @@ textgrid_dir=downloads/Eval_Ali/Eval_Ali_far/textgrid_dir
 wav_dir=downloads/Eval_Ali/Eval_Ali_far/audio_dir
 work_dir=downloads/Eval_Ali/Eval_Ali_far
 output_dir=data/
+output_task_dir=
 
  . utils/parse_options.sh || exit 1;
 
@@ -36,8 +37,8 @@ log "data preparation started"
 if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ] ; then
     # download data
     wget -c --tries=0 --read-timeout=20 https://speech-lab-share-data.oss-cn-shanghai.aliyuncs.com/AliMeeting/openlr/Eval_Ali.tar.gz -P $ALIMEETING
-    tar -xf $ALIMEETING/Eval_Ali.tar.gz
-    rm -rf $ALIMEETING/Eval_Ali.tar.gz
+    tar -xf $ALIMEETING/Eval_Ali.tar.gz -C $ALIMEETING/
+    rm -rf $ALIMEETING/Eval_Ali.tar.gz -C $ALIMEETING/
 
     wget -c --tries=0 --read-timeout=20 https://speech-lab-share-data.oss-cn-shanghai.aliyuncs.com/AliMeeting/openlr/Train_Ali_far.tar.gz -P $ALIMEETING
     tar -xf $ALIMEETING/Train_Ali_far.tar.gz
