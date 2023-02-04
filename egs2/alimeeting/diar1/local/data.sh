@@ -48,7 +48,7 @@ fi
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ] ; then
     for name in train eval; do
         mkdir -p "$output_dir/$name"
-        output_task_dir= $output_dir/$name
+        output_task_dir= "$output_dir/$name"
         # Prepare the AliMeeting data
         echo "Prepare Kaldi Type Alimeeting data"
         find $wav_dir -name "*\.wav" > $output_task_dir/wavlist
