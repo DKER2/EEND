@@ -23,7 +23,7 @@ num_spk=2 # 2, 3
     --train_set "${train_set}" \
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
-    --ngpu 1 \
+    --ngpu 2 \
     --diar_config "${train_config}" \
     --inference_config "${decode_config}" \
     --inference_nj 5 \

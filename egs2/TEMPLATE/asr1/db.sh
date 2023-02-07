@@ -7,6 +7,7 @@ AISHELL=downloads
 AISHELL2=
 AISHELL3=downloads
 AISHELL4=downloads
+ALIMEETING=downloads
 ALFFA=downloads
 AMERICASNLP22=downloads
 AN4=downloads
