@@ -46,7 +46,7 @@ fi
 
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ] ; then
     for name in train eval; do
-        output_task_dir = "$output_dir/$name"
+        output_task_dir="$output_dir/$name"
         mkdir -p $output_task_dir
         # Prepare the AliMeeting data
         echo "Prepare Alimeeting data"
