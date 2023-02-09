@@ -229,6 +229,8 @@ if ! "${skip_data_prep}"; then
                 --wavscp "${data_feats}${_suf}/${dset}"/wav.scp \
                 --output_path "${data_feats}${_suf}/${dset}" \
                 --sampling_rate "${fs}"
+
+            utils/copy_data_dir.sh "${data_feats}/org/${dset}" "${data_feats}/${dset}"
         done
     fi
 
