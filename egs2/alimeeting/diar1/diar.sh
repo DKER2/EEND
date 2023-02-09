@@ -205,7 +205,7 @@ if ! "${skip_data_prep}"; then
         # and also it can also change the audio-format and sampling rate.
         # If nothing is need, then format_wav_scp.sh does nothing:
         # i.e. the input file format and rate is same as the output.
-        for dset in "${valid_set}"; do
+        for dset in "${valid_set}" "${train_set}"; do
             if [ "${dset}" = "${train_set}" ] || [ "${dset}" = "${valid_set}" ]; then
                 _suf="/org"
             else
