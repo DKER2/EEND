@@ -59,3 +59,7 @@ specaug_conf:
     - 0
     - 40
     num_time_mask: 2
+
+label_aggregator_conf:
+    hop_length: 2048
+

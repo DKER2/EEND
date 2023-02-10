@@ -230,7 +230,7 @@ if ! "${skip_data_prep}"; then
                 --output_path "${data_feats}${_suf}/${dset}" \
                 --sampling_rate "${fs}"
 
-            utils/copy_data_dir.sh "${data_feats}/org/${dset}" "${data_feats}/${dset}"
+            cp -r "${data_feats}/org/${dset}" "${data_feats}/${dset}"
         done
     fi
 

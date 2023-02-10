@@ -1,6 +1,6 @@
-#    This config file is for SA-EEND.
-#    For the details about SA-EEND, refer to the following paper:
-#    SA-EEND: https://arxiv.org/pdf/1909.06247.pdf
+#This config file is for EEND-EDA pre-training stage (training on fixed number of speakers).
+#    For the details about EEND-EDA, refer to the following papers:
+#    EEND-EDA: https://arxiv.org/pdf/2005.09921.pdf, https://arxiv.org/pdf/2106.10654.pdf
 
 # network architecture
 # encoder related
@@ -14,8 +14,13 @@ encoder_conf:
     attention_heads: 4
     attention_dropout_rate: 0.1
 
-# decoder related
-decoder: linear
+# attractor related
+attractor: rnn
+attractor_conf:
+    unit: 256 # same as encoder output size
+    layer: 1
+    dropout: 0.1
+    attractor_grad: True
 
 # minibatch related
 batch_type: folded
@@ -23,14 +28,11 @@ batch_size: 1
 
 # optimization related
 optim: adam
-accum_grad: 2
+accum_grad: 10
 grad_clip: 5
-max_epoch: 100
+max_epoch: 50
 optim_conf:
-    lr: 0.0002
-scheduler: warmuplr
-scheduler_conf:
-    warmup_steps: 100000
+    lr: 0.0001
 
 # others:
 best_model_criterion:
@@ -38,10 +40,6 @@ best_model_criterion:
    - acc
    - max
 keep_nbest_models: 10
-
-patience: none
-# The initialization method for model parameters
-init: xavier_uniform
 
 specaug: specaug
 specaug_conf:
@@ -58,4 +56,5 @@ specaug_conf:
     num_time_mask: 2
 
 label_aggregator_conf:
-    hop_length: 8192
+    hop_length: 3000
+

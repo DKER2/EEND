@@ -47,6 +47,10 @@ fi
 
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ] ; then
     for name in train eval; do
+        if [[ "$name" == "train" ]]; then
+            textgrid_dir=downloads/Train_Ali_far/textgrid_dir
+            wav_dir=downloads/Train_Ali_far/audio_dir
+        fi
         output_task_dir="$output_dir/$name"
         mkdir -p $output_task_dir
         # Prepare the AliMeeting data
