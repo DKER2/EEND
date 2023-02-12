@@ -294,7 +294,7 @@ if ! "${skip_train}"; then
         _opts=
         if [ -n "${diar_config}" ]; then
             # To generate the config file: e.g.
-            #   % python3 -m espnet2.bin.diar_train --print_config --optim adam
+            #   % python3 -m espnet2.bin.diar_sceend_train --print_config --optim adam
             _opts+="--config ${diar_config} "
         fi
 
@@ -350,7 +350,7 @@ if ! "${skip_train}"; then
 
         # shellcheck disable=SC2046,SC2086
         ${train_cmd} JOB=1:"${_nj}" "${_logdir}"/stats.JOB.log \
-            ${python} -m espnet2.bin.diar_train \
+            ${python} -m espnet2.bin.diar_sceend_train \
                 --collect_stats true \
                 --use_preprocessor true \
                 --train_data_path_and_name_and_type "${_diar_train_dir}/${_scp},speech,${_type}" \
@@ -441,7 +441,7 @@ if ! "${skip_train}"; then
             --num_nodes "${num_nodes}" \
             --init_file_prefix "${diar_exp}"/.dist_init_ \
             --multiprocessing_distributed true -- \
-            ${python} -m espnet2.bin.diar_train \
+            ${python} -m espnet2.bin.diar_sceend_train \
                 --use_preprocessor true \
                 --resume true \
                 --fold_length "${_fold_length}" \
