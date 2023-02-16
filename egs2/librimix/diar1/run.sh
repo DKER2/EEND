@@ -14,8 +14,8 @@ train_set="train"
 valid_set="dev"
 test_sets="test"
 
-train_config="conf/train_diar.yaml"
-decode_config="conf/decode_diar.yaml"
+train_config="conf/train_diar_sceend.yaml"
+decode_config="conf/decode_diar_sceend.yaml"
 num_spk=2 # 2, 3
 
 ./diar.sh \
@@ -23,10 +23,11 @@ num_spk=2 # 2, 3
     --train_set "${train_set}" \
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
-    --ngpu 2 \
+    --ngpu 4 \
     --diar_config "${train_config}" \
     --inference_config "${decode_config}" \
     --inference_nj 5 \
     --local_data_opts "--num_spk ${num_spk}" \
     --num_spk "${num_spk}"\
+    --stage 5
     "$@"
