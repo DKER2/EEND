@@ -45,7 +45,7 @@ class SC_EEND(AbsESPnetModel):
         normalize: Optional[AbsNormalize],
         label_aggregator: torch.nn.Module,
         encoder: AbsEncoder,
-        decoder: AbsDecoder,
+        decoder: AbsEncoder,
         diar_weight: float = 1.0,
         max_speaker: int = 2,
     ):
@@ -60,7 +60,7 @@ class SC_EEND(AbsESPnetModel):
         self.label_aggregator = label_aggregator
         self.diar_weight = diar_weight
         self.decoder = decoder
-        self.expander = torch.nn.Linear(1, 256) 
+        self.squeezer = torch.nn.Linear(256, 1) 
         self.max_speaker = max_speaker
 
     def forward(
@@ -96,15 +96,16 @@ class SC_EEND(AbsESPnetModel):
 
         pred = []
         y = to_device(self, torch.zeros((encoder_out.shape[0], encoder_out.shape[1], 1)))
+        H = to_device(self, torch.zeros_like((encoder_out)))
         num_spk = 0
 
         while num_spk<self.max_speaker:
             num_spk = num_spk + 1
-            y_stacked = torch.cat([self.expander(y), encoder_out], axis=2)
+            y_stacked = torch.cat([H, encoder_out], axis=2)
             y_stacked_lens = encoder_out_lens
-            h = self.decoder(y_stacked, y_stacked_lens)
-            y = torch.sigmoid(h)
-            pred.append(y)
+            H = self.decoder(y_stacked, y_stacked_lens)[0]
+            z = torch.sigmoid(self.squeezer(H))
+            pred.append(z)
 
         pred = torch.cat(pred, axis=-1)
 

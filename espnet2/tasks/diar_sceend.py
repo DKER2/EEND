@@ -24,8 +24,8 @@ from espnet2.asr.specaug.abs_specaug import AbsSpecAug
 from espnet2.asr.specaug.specaug import SpecAug
 from espnet2.diar.attractor.abs_attractor import AbsAttractor
 from espnet2.diar.attractor.rnn_attractor import RnnAttractor
-from espnet2.diar.decoder.abs_decoder import AbsDecoder
-from espnet2.diar.decoder.linear_decoder import LinearDecoder
+from espnet2.asr.decoder.abs_decoder import AbsDecoder
+from espnet2.asr.decoder.rnn_decoder import RNNDecoder
 from espnet2.diar.espnet_model import ESPnetDiarizationModel
 from espnet2.layers.abs_normalize import AbsNormalize
 from espnet2.layers.global_mvn import GlobalMVN
@@ -88,9 +88,9 @@ encoder_choices = ClassChoices(
 )
 decoder_choices = ClassChoices(
     "decoder",
-    classes=dict(linear=LinearDecoder),
-    type_check=AbsDecoder,
-    default="linear",
+    classes=dict(rnn=RNNEncoder),
+    type_check=AbsEncoder,
+    default="rnn",
 )
 
 MAX_REFERENCE_NUM = 100
@@ -285,7 +285,7 @@ class SC_EENDTask(AbsTask):
         # 6a. diar_decoder
         decoder_class = decoder_choices.get_class(args.decoder)
         decoder = decoder_class(
-            encoder_output_size=encoder.output_size()*2,
+            input_size=encoder.output_size()*2,
             **args.decoder_conf,
         )
 
