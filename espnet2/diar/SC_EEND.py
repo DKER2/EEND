@@ -60,7 +60,7 @@ class SC_EEND(AbsESPnetModel):
         self.label_aggregator = label_aggregator
         self.diar_weight = diar_weight
         self.decoder = decoder
-        self.squeezer = torch.nn.Linear(256, 1) 
+        self.squeezer = torch.nn.Linear(256, 2) 
         self.max_speaker = max_speaker
 
     def forward(
@@ -94,12 +94,13 @@ class SC_EEND(AbsESPnetModel):
             speech, speech_lengths, bottleneck_feats, bottleneck_feats_lengths
         )
 
-        pred = []
+        #pred = []
         y = to_device(self, torch.zeros((encoder_out.shape[0], encoder_out.shape[1], 1)))
         H = to_device(self, torch.zeros_like((encoder_out)))
         num_spk = 0
 
-        while num_spk<self.max_speaker:
+        pred = squeezer(encoder_out)
+        """while num_spk<self.max_speaker:
             num_spk = num_spk + 1
             y_stacked = torch.cat([H, encoder_out], axis=2)
             y_stacked_lens = encoder_out_lens
@@ -107,7 +108,7 @@ class SC_EEND(AbsESPnetModel):
             z = torch.sigmoid(self.squeezer(H))
             pred.append(z)
 
-        pred = torch.cat(pred, axis=-1)
+        pred = torch.cat(pred, axis=-1)"""
 
         # 3. Aggregate time-domain labels
         spk_labels, spk_labels_lengths = self.label_aggregator(
