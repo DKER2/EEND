@@ -100,6 +100,11 @@ class SC_EEND(AbsESPnetModel):
         H = to_device(self, torch.zeros_like((encoder_out)))
         num_spk = 0
 
+        # 2. Aggregate time-domain labels
+        spk_labels, spk_labels_lengths = self.label_aggregator(
+            spk_labels, spk_labels_lengths
+        )
+
         #pred = self.squeezer(encoder_out)
         while num_spk<self.max_speaker:
             num_spk = num_spk + 1
@@ -109,13 +114,11 @@ class SC_EEND(AbsESPnetModel):
             #print(H.shape)
             y = torch.sigmoid(self.squeezer(H))
             pred.append(y)
+            y = spk_labels[num_spk-1]
 
         pred = torch.cat(pred, axis=-1)
 
-        # 3. Aggregate time-domain labels
-        spk_labels, spk_labels_lengths = self.label_aggregator(
-            spk_labels, spk_labels_lengths
-        )
+        
 
         # If encoder uses conv* as input_layer (i.e., subsampling),
         # the sequence length of 'pred' might be slighly less than the
