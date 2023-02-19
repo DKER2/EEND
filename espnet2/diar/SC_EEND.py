@@ -106,7 +106,7 @@ class SC_EEND(AbsESPnetModel):
             y_stacked = torch.cat([self.expader(y), encoder_out], axis=2)
             y_stacked_lens = encoder_out_lens
             H = self.decoder(y_stacked, y_stacked_lens)[0]
-            print(H.shape)
+            #print(H.shape)
             y = torch.sigmoid(self.squeezer(H))
             pred.append(y)
 
