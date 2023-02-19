@@ -19,7 +19,7 @@ train_config2="conf/train_diar_eda_adapt.yaml"
 decode_config="conf/decode_diar_eda.yaml"
 
 pretrain_stage=true
-adapt_stage=true
+adapt_stage=false
 # If you want to run only one of the stages (e.g., the adaptation stage),
 # set "false" to the one you don't want to run (e.g., the pre-training stage)
 
@@ -29,12 +29,13 @@ if [[ ${pretrain_stage} == "true" ]]; then
     --train_set "${train_set}" \
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
-    --ngpu 1 \
+    --ngpu 2 \
     --diar_config "${train_config1}" \
     --inference_config "${decode_config}" \
     --inference_nj 5 \
     --local_data_opts "--num_spk 2" \
     --stop_stage 5 \
+    --stage 5 \
     "$@"
 fi
 
@@ -46,7 +47,7 @@ if [[ ${adapt_stage} == "true" ]]; then
     --train_set "${train_set}" \
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
-    --ngpu 1 \
+    --ngpu 4 \
     --diar_config "${train_config2}" \
     --inference_config "${decode_config}" \
     --inference_nj 5 \
@@ -54,5 +55,6 @@ if [[ ${adapt_stage} == "true" ]]; then
     --diar_args "--init_param exp/diar_train_diar_eda_5_raw_max_epoch250/valid.acc.ave_10best.pth" \
     --diar_tag "train_diar_eda_adapt_raw" \
     --num_spk "3"\
+    --stage 5
     "$@"
 fi

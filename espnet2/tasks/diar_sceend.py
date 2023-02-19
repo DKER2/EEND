@@ -168,20 +168,6 @@ class SC_EENDTask(AbsTask):
             help="The number of input dimension of the feature",
         )
 
-        group.add_argument(
-            "--criterions",
-            action=NestedDictAction,
-            default=[
-                {
-                    "name": "si_snr",
-                    "conf": {},
-                    "wrapper": "fixed_order",
-                    "wrapper_conf": {},
-                },
-            ],
-            help="The criterions binded with the loss wrappers.",
-        )
-
         for class_choices in cls.class_choices_list:
             # Append --<name> and --<name>_conf.
             # e.g. --encoder and --encoder_conf
@@ -226,10 +212,7 @@ class SC_EENDTask(AbsTask):
     def optional_data_names(
         cls, train: bool = True, inference: bool = False
     ) -> Tuple[str, ...]:
-        retval = ["dereverb_ref{}".format(n) for n in range(1, MAX_REFERENCE_NUM + 1)]
-        retval += ["speech_ref{}".format(n) for n in range(2, MAX_REFERENCE_NUM + 1)]
-        retval += ["noise_ref{}".format(n) for n in range(1, MAX_REFERENCE_NUM + 1)]
-        retval = tuple(retval)
+        retval=()
         assert check_return_type(retval)
         return retval
 

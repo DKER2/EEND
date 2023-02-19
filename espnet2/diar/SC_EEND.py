@@ -59,7 +59,7 @@ class SC_EEND(AbsESPnetModel):
         self.specaug = specaug
         self.label_aggregator = label_aggregator
         self.diar_weight = diar_weight
-        self.decoder = decoder
+        #self.decoder = decoder
         self.squeezer = torch.nn.Linear(256, 2) 
         self.max_speaker = max_speaker
 
@@ -95,11 +95,11 @@ class SC_EEND(AbsESPnetModel):
         )
 
         #pred = []
-        y = to_device(self, torch.zeros((encoder_out.shape[0], encoder_out.shape[1], 1)))
-        H = to_device(self, torch.zeros_like((encoder_out)))
+        #y = to_device(self, torch.zeros((encoder_out.shape[0], encoder_out.shape[1], 1)))
+        #H = to_device(self, torch.zeros_like((encoder_out)))
         num_spk = 0
 
-        pred = squeezer(encoder_out)
+        pred = self.squeezer(encoder_out)
         """while num_spk<self.max_speaker:
             num_spk = num_spk + 1
             y_stacked = torch.cat([H, encoder_out], axis=2)
