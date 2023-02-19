@@ -114,7 +114,9 @@ class SC_EEND(AbsESPnetModel):
             #print(H.shape)
             y = torch.sigmoid(self.squeezer(H))
             pred.append(y)
-            y = spk_labels[num_spk-1]
+            y = spk_labels[:, :, num_spk-1]
+            y = y.view(batch_size, -1, 1)
+            print(y.shape)
 
         pred = torch.cat(pred, axis=-1)
 
