@@ -88,9 +88,12 @@ encoder_choices = ClassChoices(
 )
 decoder_choices = ClassChoices(
     "decoder",
-    classes=dict(rnn=RNNEncoder),
+    classes=dict(
+        rnn=RNNEncoder,
+        transformer=TransformerEncoder
+    ),
     type_check=AbsEncoder,
-    default="rnn",
+    default="transformer",
 )
 
 MAX_REFERENCE_NUM = 100
@@ -268,7 +271,7 @@ class SC_EENDTask(AbsTask):
         # 6a. diar_decoder
         decoder_class = decoder_choices.get_class(args.decoder)
         decoder = decoder_class(
-            input_size=encoder.output_size()*2,
+            input_size=encoder.output_size()+64,
             **args.decoder_conf,
         )
 
