@@ -578,7 +578,7 @@ def inference(
         else:
             spk_predictions = diarize_speech(**batch)
             for b in range(batch_size):
-                writer[keys[b]] = spk_predictions[b]
+                writer[keys[b]] = spk_predictions[1][b]
 
     if enh_s2t_task:
         for w in wav_writers:
