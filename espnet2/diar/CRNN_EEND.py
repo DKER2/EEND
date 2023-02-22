@@ -103,10 +103,10 @@ class CRNN_EEND(AbsESPnetModel):
         supperV = torch.sum(global_encoder_out, dim=1)
         supperV = supperV/encoder_out.shape[1]
 
-        for time_stamp in range(encoder_out.shape[1]):
-            pred.append(self.decoder(torch.cat([supperV, encoder_out[:, time_stamp, :]], axis=-1), encoder_out_lens))
+        supperV = supperV.unsqueeze(1).expand(-1, encoder_out.shape[1], -1)
+        pred = self.decoder(torch.cat([supperV, encoder_out], axis=-1), encoder_out_lens)
 
-        pred = torch.cat(pred, axis=0).view(batch_size, len(pred), -1)
+        #pred = torch.cat(pred, axis=0).view(batch_size, len(pred), -1)
 
         #print(pred.shape)
 
