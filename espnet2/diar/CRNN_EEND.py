@@ -97,10 +97,10 @@ class CRNN_EEND(AbsESPnetModel):
         )
 
         pred = []
-        supperV = torch.zeros(encoder_out.shape[0], 512)
 
-        for time_stamp in range(encoder_out.shape[1]):
-            supperV = supperV + self.global_encoder(encoder_out[:, time_stamp, :])
+        global_encoder_out = self.global_encoder(encoder_out)
+
+        supperV = torch.sum(global_encoder_out, dim=1)
         supperV = supperV/encoder_out.shape[1]
 
         for time_stamp in range(encoder_out.shape[1]):
@@ -108,7 +108,7 @@ class CRNN_EEND(AbsESPnetModel):
 
         pred = torch.cat(pred, axis=0).view(batch_size, len(pred), -1)
 
-        print(pred.shape)
+        #print(pred.shape)
 
         # 2. Aggregate time-domain labels
         spk_labels, spk_labels_lengths = self.label_aggregator(
