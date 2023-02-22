@@ -60,7 +60,8 @@ class CRNN_EEND(AbsESPnetModel):
         self.specaug = specaug
         self.label_aggregator = label_aggregator
         self.diar_weight = diar_weight
-        self.global_encoder = global_encoder
+        #self.global_encoder = global_encoder
+        self.global_encoder = torch.nn.Linear(256, 512)
         self.decoder = decoder
         self.max_speaker = max_speaker
 
@@ -95,12 +96,15 @@ class CRNN_EEND(AbsESPnetModel):
             speech, speech_lengths, bottleneck_feats, bottleneck_feats_lengths
         )
 
-        global_encoder_out = self.global_encoder(encoder_out, encoder_out_lens)[0]
-
         pred = []
+        supperV = torch.zeros(encoder_out.shape[0], 512)
 
-        for time_stamp in range(global_encoder_out.shape[1]):
-            pred.append(self.decoder(torch.cat([global_encoder_out[:, time_stamp, :], encoder_out[:, time_stamp, :]], axis=-1), encoder_out_lens))
+        for time_stamp in range(encoder_out.shape[1]):
+            supperV = supperV + self.global_encoder(encoder_out[:, time_stamp, :])
+        supperV = supperV/encoder_out.shape[1]
+
+        for time_stamp in range(encoder_out.shape[1]):
+            pred.append(self.decoder(torch.cat([supperV, encoder_out[:, time_stamp, :]], axis=-1), encoder_out_lens))
 
         pred = torch.cat(pred, axis=0).view(batch_size, len(pred), -1)
 
