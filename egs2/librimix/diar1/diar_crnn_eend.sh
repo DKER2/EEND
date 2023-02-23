@@ -516,7 +516,7 @@ if ! "${skip_eval}"; then
             log "Diarization started... log: '${_logdir}/diar_inference.*.log'"
             # shellcheck disable=SC2046,SC2086
             ${_cmd} --gpu "${_ngpu}" JOB=1:"${_nj}" "${_logdir}"/diar_inference.JOB.log \
-                ${python} -m espnet2.bin.diar_inference \
+                ${python} -m espnet2.bin.diar_crnn_eend_inference \
                     --ngpu "${_ngpu}" \
                     --fs "${fs}" \
                     --data_path_and_name_and_type "${_data}/${_scp},speech,${_type}" \
