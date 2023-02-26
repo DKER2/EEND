@@ -18,7 +18,7 @@ from espnet2.enh.loss.criterions.time_domain import SISNRLoss
 from espnet2.enh.loss.wrappers.pit_solver import PITSolver
 from espnet2.fileio.npy_scp import NpyScpWriter
 from espnet2.fileio.sound_scp import SoundScpWriter
-from espnet2.tasks.diar import DiarizationTask
+from espnet2.tasks.diar_crnn_eend import CRNN_EENDTask
 from espnet2.tasks.enh_s2t import EnhS2TTask
 from espnet2.torch_utils.device_funcs import to_device
 from espnet2.torch_utils.set_all_random_seed import set_all_random_seed
@@ -62,7 +62,7 @@ class DiarizeSpeech:
     ):
         assert check_argument_types()
 
-        task = DiarizationTask if not enh_s2t_task else EnhS2TTask
+        task = CRNN_EENDTask if not enh_s2t_task else EnhS2TTask
 
         # 1. Build Diar model
         diar_model, diar_train_args = task.build_model_from_file(
@@ -417,7 +417,7 @@ class DiarizeSpeech:
         supperV = supperV/encoder_out.shape[1]
 
         supperV = supperV.unsqueeze(1).expand(-1, encoder_out.shape[1], -1)
-        pred = self.decoder(torch.cat([supperV, encoder_out], axis=-1), encoder_out_lens)
+        pred = self.diar_model.decoder(torch.cat([supperV, encoder_out], axis=-1), encoder_out_lens)
 
         return pred, pred.shape[0]
 
@@ -486,16 +486,16 @@ def inference(
     )
 
     # 3. Build data-iterator
-    loader = DiarizationTask.build_streaming_iterator(
+    loader = CRNN_EENDTask.build_streaming_iterator(
         data_path_and_name_and_type,
         dtype=dtype,
         batch_size=batch_size,
         key_file=key_file,
         num_workers=num_workers,
-        preprocess_fn=DiarizationTask.build_preprocess_fn(
+        preprocess_fn=CRNN_EENDTask.build_preprocess_fn(
             diarize_speech.diar_train_args, False
         ),
-        collate_fn=DiarizationTask.build_collate_fn(
+        collate_fn=CRNN_EENDTask.build_collate_fn(
             diarize_speech.diar_train_args, False
         ),
         allow_variable_data_keys=allow_variable_data_keys,

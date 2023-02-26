@@ -35,7 +35,7 @@ num_nodes=1          # The number of nodes
 nj=32                # The number of parallel jobs.
 dumpdir=dump         # Directory to dump features.
 inference_nj=32      # The number of parallel jobs in decoding.
-gpu_inference=false  # Whether to perform gpu decoding.
+gpu_inference=true  # Whether to perform gpu decoding.
 expdir=exp           # Directory to save experiments.
 python=python3       # Specify python to execute espnet commands
 
