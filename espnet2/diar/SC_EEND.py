@@ -60,8 +60,9 @@ class SC_EEND(AbsESPnetModel):
         self.label_aggregator = label_aggregator
         self.diar_weight = diar_weight
         self.decoder = decoder
-        self.squeezer = torch.nn.Linear(256, 1)
-        self.expader = torch.nn.Linear(1, 64)
+        self.conv = torch.nn.Conv1d(in_channels=256, out_channels=64, kernel_size=4, padding='same', padding_mode='replicate')
+        self.squeezer = torch.nn.Linear(320, 2)
+        #self.expader = torch.nn.Linear(1, 64)
         self.max_speaker = max_speaker
 
     def forward(
@@ -95,15 +96,19 @@ class SC_EEND(AbsESPnetModel):
             speech, speech_lengths, bottleneck_feats, bottleneck_feats_lengths
         )
 
-        pred = []
+        compare_vector = encoder_out.view(batch_size, encoder_out.shape[2], encoder_out.shape[1])
+        compare_vector = self.conv(compare_vector)
+        compare_vector = compare_vector.view(batch_size, compare_vector.shape[2], -1)
+        
+        encoder_out = torch.cat([compare_vector, encoder_out], axis=-1)
+
+        pred = self.squeezer(encoder_out)
+        """pred = []
         y = to_device(self, torch.zeros((encoder_out.shape[0], encoder_out.shape[1], 1)))
         H = to_device(self, torch.zeros_like((encoder_out)))
         num_spk = 0
 
-        # 2. Aggregate time-domain labels
-        spk_labels, spk_labels_lengths = self.label_aggregator(
-            spk_labels, spk_labels_lengths
-        )
+        
 
         #pred = self.squeezer(encoder_out)
 
@@ -116,11 +121,13 @@ class SC_EEND(AbsESPnetModel):
             pred.append(y)
             y = spk_labels[:, :, num_spk-1]
             y = y.view(batch_size, -1, 1)
-            #print(y)
 
-        pred = torch.cat(pred, axis=-1)
+        pred = torch.cat(pred, axis=-1)"""
 
-        
+        # 2. Aggregate time-domain labels
+        spk_labels, spk_labels_lengths = self.label_aggregator(
+            spk_labels, spk_labels_lengths
+        )
 
         # If encoder uses conv* as input_layer (i.e., subsampling),
         # the sequence length of 'pred' might be slighly less than the

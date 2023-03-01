@@ -286,7 +286,7 @@ class CRNN_EENDTask(AbsTask):
         # 6a. diar_decoder
         decoder_class = decoder_choices.get_class(args.decoder)
         decoder = decoder_class(
-            encoder_output_size=encoder.output_size()+global_encoder.output_size(),
+            encoder_output_size=encoder.output_size(),
             **args.decoder_conf,
         )
 

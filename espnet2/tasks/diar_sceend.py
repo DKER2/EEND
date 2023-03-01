@@ -271,7 +271,7 @@ class SC_EENDTask(AbsTask):
         # 6a. diar_decoder
         decoder_class = decoder_choices.get_class(args.decoder)
         decoder = decoder_class(
-            input_size=encoder.output_size()+64,
+            input_size=encoder.output_size(),
             **args.decoder_conf,
         )
 
