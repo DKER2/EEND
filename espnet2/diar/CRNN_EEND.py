@@ -96,15 +96,24 @@ class CRNN_EEND(AbsESPnetModel):
             speech, speech_lengths, bottleneck_feats, bottleneck_feats_lengths
         )
 
-        pred = []
+        #pred = []
 
-        global_encoder_out = self.global_encoder(encoder_out)
+        #global_encoder_out = self.global_encoder(encoder_out)
 
-        supperV = torch.sum(global_encoder_out, dim=1)
-        supperV = supperV/encoder_out.shape[1]
+        #supperV = torch.sum(global_encoder_out, dim=1)
+        #supperV = supperV/encoder_out.shape[1]
 
-        supperV = supperV.unsqueeze(1).expand(-1, encoder_out.shape[1], -1)
-        pred = self.decoder(torch.cat([supperV, encoder_out], axis=-1), encoder_out_lens)
+        #supperV = supperV.unsqueeze(1).expand(-1, encoder_out.shape[1], -1)
+        out_pred = self.decoder(encoder_out, encoder_out_lens)
+
+        index = torch.argmax(out_pred, dim=2)
+
+        pred = torch.zeros(out_pred.shape[0], out_pred.shape[1], 2)
+
+        pred[index==0] = torch.Tensor([0, 0])
+        pred[index==1] = torch.Tensor([0, 1])
+        pred[index==2] = torch.Tensor([1, 0])
+        pred[index==3] = torch.Tensor([1, 1])
 
         #pred = torch.cat(pred, axis=0).view(batch_size, len(pred), -1)
 
@@ -126,7 +135,7 @@ class CRNN_EEND(AbsESPnetModel):
         #Loss Calculation
         loss_pit, loss_att = None, None
         loss, perm_idx, perm_list, label_perm = self.pit_loss(
-            pred, spk_labels, encoder_out_lens
+            out_pred, spk_labels, encoder_out_lens
         )
 
         (
@@ -165,7 +174,7 @@ class CRNN_EEND(AbsESPnetModel):
             acc=acc,
             der=der,
         )
-
+        
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
         return loss, stats, weight
 
@@ -266,9 +275,14 @@ class CRNN_EEND(AbsESPnetModel):
         return feats, feats_lengths
 
     def pit_loss_single_permute(self, pred, label, length):
+        new_label = torch.zeros(label.shape[0], label.shape[1], 4)
+        new_label[torch.equal(label, torch.Tensor(0, 0))] = torch.Tensor([1, 0, 0, 0])
+        new_label[torch.equal(label, torch.Tensor(0, 1))] = torch.Tensor([0, 1, 0, 0])
+        new_label[torch.equal(label, torch.Tensor(1, 0))] = torch.Tensor([0, 0, 1, 0])
+        new_label[torch.equal(label, torch.Tensor(1, 1))] = torch.Tensor([0, 0, 0, 1])
         bce_loss = torch.nn.BCEWithLogitsLoss(reduction="none")
-        mask = self.create_length_mask(length, label.size(1), label.size(2))
-        loss = bce_loss(pred, label)
+        mask = self.create_length_mask(length, new_label.size(1), new_label.size(2))
+        loss = bce_loss(pred, new_label)
         loss = loss * mask
         loss = torch.sum(torch.mean(loss, dim=2), dim=1)
         loss = torch.unsqueeze(loss, dim=1)
