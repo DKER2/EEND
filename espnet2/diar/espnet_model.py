@@ -95,7 +95,8 @@ class ESPnetDiarizationModel(AbsESPnetModel):
         """
         assert speech.shape[0] == spk_labels.shape[0], (speech.shape, spk_labels.shape)
         batch_size = speech.shape[0]
-
+        #print("Batch Size", batch_size)
+        #print(spk_labels.shape)
         # 1. Encoder
         # Use bottleneck_feats if exist. Only for "enh + diar" task.
         bottleneck_feats = kwargs.get("bottleneck_feats", None)
